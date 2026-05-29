@@ -1,0 +1,172 @@
+/* =========================================================
+   RESET GERAL
+========================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =========================================================
+   BODY GLOBAL
+========================================================= */
+
+body {
+  height: 100vh;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(
+    135deg,
+    #1a0033,
+    #3b0a66,
+    #240046
+  );
+
+  background-size: 300% 300%;
+  animation: gradientMove 10s ease infinite;
+}
+
+/* =========================================================
+   FUNDO ANIMADO
+========================================================= */
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* =========================================================
+   COMPONENTES GLOBAIS
+========================================================= */
+
+button {
+  padding: 15px 32px;
+  font-size: 18px;
+
+  border: none;
+  border-radius: 999px;
+
+  cursor: pointer;
+
+  background: rgba(255, 255, 255, 0.95);
+  color: #2a0a4a;
+
+  font-weight: bold;
+
+  transition: 0.25s ease;
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+button:hover {
+  transform: translateY(-2px) scale(1.03);
+  background: white;
+}
+
+/* =========================================================
+   INDEX.HTML
+========================================================= */
+
+.container {
+  display: flex;
+  flex-direction: column; /* força título em cima */
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.title {
+  color: white;
+  font-size: 64px;
+  letter-spacing: 6px;
+
+  text-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+
+  font-weight: 700;
+}
+
+/* =========================================================
+   MODAL LOGIN
+========================================================= */
+
+.modal {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.6);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  backdrop-filter: blur(8px);
+}
+
+.hidden {
+  display: none;
+}
+
+.modal-box {
+  background: rgba(20, 0, 40, 0.9);
+
+  padding: 30px;
+  width: 320px;
+
+  border-radius: 18px;
+
+  color: white;
+
+  text-align: center;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-box h2 {
+  margin-bottom: 18px;
+}
+
+.modal-box input[type="text"],
+.modal-box input[type="password"] {
+  width: 100%;
+
+  padding: 12px;
+  margin: 10px 0;
+
+  border: none;
+  border-radius: 10px;
+
+  outline: none;
+}
+
+.roles {
+  display: flex;
+  justify-content: space-around;
+
+  margin: 15px 0;
+
+  font-size: 14px;
+}
+
+.roles label {
+  cursor: pointer;
+}
+
+#joinBtn {
+  width: 100%;
+  margin-top: 10px;
+}

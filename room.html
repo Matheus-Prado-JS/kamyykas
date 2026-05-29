@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BINGO - Sala</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="room.css" />
+  <link rel="stylesheet" href="cartela.css" />
+</head>
+
+<body>
+
+  <!-- PLAYERS -->
+  <div class="top-panel">
+
+    <div class="players-box" id="playersBox">
+      Players
+    </div>
+
+    <button class="refresh-btn" onclick="location.reload()">
+      Refresh
+    </button>
+
+  </div>
+
+  <!-- MAIN -->
+  <div class="room-wrapper">
+
+    <!-- ROLETA -->
+    <div class="roulette-container">
+
+      <h2 class="roulette-title">
+        Bingo Roller
+      </h2>
+
+      <!-- DISPLAY ROLETA -->
+      <div class="roulette-display">
+
+<div class="roulette-track" id="rouletteTrack"></div>
+
+      </div>
+
+      <!-- BOTÃO -->
+      <button class="roll-btn" id="rollBtn">
+        Rolar Roleta
+      </button>
+
+      <!-- RESULTADO -->
+      <div class="result-box">
+        Resultado:
+        <span id="resultNumber">--</span>
+      </div>
+
+    </div>
+
+<!-- CARTELA -->
+<div class="bingo-section">
+
+  <button class="generate-btn" id="generateCardBtn">
+    Gerar Cartela
+  </button>
+
+  <div class="bingo-card hidden" id="bingoCard"></div>
+
+  <button class="bingo-btn hidden" id="bingoBtn">
+    BINGO!
+  </button>
+
+</div>
+
+  </div>
+
+  <script type="module" src="room.js"></script>
+   <script type="module" src="cartela.js"></script>
+
+   <div id="globalToast" class="global-toast hidden"></div>
+
+</body>
+</html>
