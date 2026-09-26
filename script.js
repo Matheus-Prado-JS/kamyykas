@@ -42,75 +42,88 @@ roleInputs.forEach(input => {
 // =========================================================
 // ENTRAR NA SALA
 // =========================================================
-
 joinBtn?.addEventListener("click", async () => {
 
-  const name =
-    document.getElementById("nameInput")
+  const name = document
+    .getElementById("nameInput")
     .value
     .trim();
 
-  const role =
-    document.querySelector(
-      'input[name="role"]:checked'
-    )?.value;
+  const role = document.querySelector(
+    'input[name="role"]:checked'
+  )?.value;
 
-  const pass =
-    adminPass.value.trim();
+  const pass = adminPass.value.trim();
 
-  // nome obrigatório
+
   if (!name) {
-
     return alert("Digite seu nome");
   }
 
-  // senha admin
-  if (
-    role === "admin"
-    && pass !== "cacatua123"
-  ) {
 
+  if (
+    role === "admin" &&
+    pass !== "cacatua123"
+  ) {
     return alert("Senha de admin incorreta");
   }
 
-  // gera ID único
-  const playerId =
-    crypto.randomUUID();
 
-  // salva no firebase
-  await set(
-    ref(db, `players/${playerId}`),
-    {
-      id: playerId,
-      name,
-      role,
-      points: 0,
-      timestamp: Date.now()
-    }
-  );
+  try {
 
-  // salva sessão local
-  localStorage.setItem(
-    "playerId",
-    playerId
-  );
+    console.log("Tentando entrar...");
+    console.log("Nome:", name);
+    console.log("Role:", role);
 
-  localStorage.setItem(
-    "playerName",
-    name
-  );
+    const playerId = crypto.randomUUID();
 
-  localStorage.setItem(
-    "playerRole",
-    role
-  );
 
-  // debug
-  console.log("LOGIN:");
-  console.log("Nome:", name);
-  console.log("Role:", role);
+    await set(
+      ref(db, `players/${playerId}`),
+      {
+        id: playerId,
+        name,
+        role,
+        points: 0,
+        timestamp: Date.now()
+      }
+    );
 
-  // entra na sala
-  window.location.href =
-    "room.html";
+
+    console.log("Player salvo no Firebase!");
+
+
+    localStorage.setItem(
+      "playerId",
+      playerId
+    );
+
+    localStorage.setItem(
+      "playerName",
+      name
+    );
+
+    localStorage.setItem(
+      "playerRole",
+      role
+    );
+
+
+    console.log("Entrando na sala...");
+
+    window.location.href = "./room.html";
+
+  } catch (error) {
+
+    console.error(
+      "ERRO AO ENTRAR NA SALA:",
+      error
+    );
+
+    alert(
+      "Não foi possível entrar na sala. Veja o console."
+    );
+
+  }
+
 });

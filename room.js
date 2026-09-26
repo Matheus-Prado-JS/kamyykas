@@ -3,8 +3,10 @@ import {
   ref,
   onValue,
   remove,
-  set
+  set,
+  get
 } from "./firebase.js";
+
 
 // =========================================================
 // ELEMENTOS
@@ -13,11 +15,21 @@ import {
 const rollBtn =
   document.getElementById("rollBtn");
 
+const resetRouletteBtn =
+  document.getElementById("resetRouletteBtn");
+
 const resultNumber =
   document.getElementById("resultNumber");
 
-const rouletteTrack =
-  document.getElementById("rouletteTrack");
+const drawCard =
+  document.getElementById("drawCard");
+
+const drawCardText =
+  document.getElementById("drawCardText");
+
+const drawStatus =
+  document.getElementById("drawStatus");
+
 
 // =========================================================
 // PLAYER
@@ -25,6 +37,7 @@ const rouletteTrack =
 
 const playerRole =
   localStorage.getItem("playerRole");
+
 
 // =========================================================
 // SOMENTE ADMIN
@@ -38,15 +51,18 @@ if (playerRole !== "admin") {
 
   rollBtn.style.cursor = "not-allowed";
 
-  rollBtn.textContent =
-    "Somente Admin";
+  rollBtn.textContent = "Somente Admin";
+
+  resetRouletteBtn.classList.add("hidden");
 }
+
 
 // =========================================================
 // OPÇÕES
 // =========================================================
 
 const rouletteOptions = [
+
   "MIC FALHANDO",
   "LIVE CAINDO",
   "SONS ESTOURADOS",
@@ -74,273 +90,425 @@ const rouletteOptions = [
   "PESSOA QUE SÓ APARECE 1X E GANHA SORTEIO",
   "PROBLEMAS DE SONS",
   "ESPIRRO DO YAGAMI"
+
 ];
 
-// =========================================================
-// CONFIG
-// =========================================================
-
-const ITEM_WIDTH = 260;
 
 // =========================================================
-// RENDER
+// CONTROLE LOCAL DA ANIMAÇÃO
 // =========================================================
 
-function renderRoulette(items) {
+let animationInterval = null;
 
-  rouletteTrack.innerHTML = "";
+let animationTimeout = null;
 
-  items.forEach(item => {
+let lastSpinTimestamp = null;
 
-    const div =
-      document.createElement("div");
-
-    div.classList.add("roulette-item");
-
-    div.textContent = item;
-
-    rouletteTrack.appendChild(div);
-  });
-}
-
-// =========================================================
-// SHUFFLE
-// =========================================================
-
-function shuffleArray(array) {
-
-  const arr = [...array];
-
-  for (let i = arr.length - 1; i > 0; i--) {
-
-    const j =
-      Math.floor(Math.random() * (i + 1));
-
-    [arr[i], arr[j]] =
-      [arr[j], arr[i]];
-  }
-
-  return arr;
-}
 
 // =========================================================
 // ESTADO INICIAL
 // =========================================================
 
-const initialTrack = [];
+function resetDrawVisual() {
 
-for (let i = 0; i < 20; i++) {
+  clearInterval(animationInterval);
+  clearTimeout(animationTimeout);
 
-  initialTrack.push(
-    ...shuffleArray(rouletteOptions)
-  );
-}
+  animationInterval = null;
+  animationTimeout = null;
 
-renderRoulette(initialTrack);
+  drawCard.className = "draw-card";
 
-// =========================================================
-// ADMIN GIRA
-// =========================================================
+  drawCardText.textContent = "?";
 
-rollBtn.addEventListener("click", async () => {
-
-  if (playerRole !== "admin") return;
-
-  rollBtn.disabled = true;
+  drawStatus.textContent = "PRONTO";
 
   resultNumber.textContent = "--";
+}
 
-  // cria track gigante
-  const trackItems = [];
-
-  for (let i = 0; i < 30; i++) {
-
-    trackItems.push(
-      ...shuffleArray(rouletteOptions)
-    );
-  }
-
-  // posição LONGE
-  const winnerIndex =
-    Math.floor(Math.random() * 100) + 120;
-
-  // salva realtime
-  await set(
-    ref(db, "roulette/currentSpin"),
-    {
-      winnerIndex,
-      trackItems,
-      timestamp: Date.now()
-    }
-  );
-});
 
 // =========================================================
-// TODOS ESCUTAM
+// ADMIN SORTEIA
+// =========================================================
+
+rollBtn.addEventListener(
+  "click",
+  async () => {
+
+    if (playerRole !== "admin") {
+      return;
+    }
+
+    rollBtn.disabled = true;
+    resetRouletteBtn.disabled = true;
+
+
+    // =====================================================
+    // OPÇÕES JÁ UTILIZADAS
+    // =====================================================
+
+    const usedSnapshot =
+      await get(
+        ref(db, "roulette/usedOptions")
+      );
+
+    const usedData =
+      usedSnapshot.val() || {};
+
+    const usedOptions =
+      Object.values(usedData);
+
+
+    // =====================================================
+    // OPÇÕES DISPONÍVEIS
+    // =====================================================
+
+    const availableOptions =
+      rouletteOptions.filter(
+        option =>
+          !usedOptions.includes(option)
+      );
+
+
+    // =====================================================
+    // TODAS JÁ FORAM
+    // =====================================================
+
+    if (availableOptions.length === 0) {
+
+      alert(
+        "Todas as opções já foram sorteadas! Resete o sorteador."
+      );
+
+      rollBtn.disabled = false;
+      resetRouletteBtn.disabled = false;
+
+      return;
+    }
+
+
+    // =====================================================
+    // ESCOLHE O RESULTADO REAL
+    // =====================================================
+
+    const winner =
+      availableOptions[
+        Math.floor(
+          Math.random() *
+          availableOptions.length
+        )
+      ];
+
+
+    const timestamp = Date.now();
+
+
+    // =====================================================
+    // MARCA COMO UTILIZADO
+    // =====================================================
+
+    await set(
+      ref(
+        db,
+        `roulette/usedOptions/${timestamp}`
+      ),
+      winner
+    );
+
+
+    // =====================================================
+    // ENVIA O RESULTADO PARA TODOS
+    // =====================================================
+
+    await set(
+      ref(db, "roulette/currentSpin"),
+      {
+        winner,
+        timestamp
+      }
+    );
+
+  }
+);
+
+
+// =========================================================
+// TODOS ESCUTAM O SORTEIO
 // =========================================================
 
 const rouletteRef =
   ref(db, "roulette/currentSpin");
 
-onValue(rouletteRef, (snapshot) => {
 
-  const data = snapshot.val();
+onValue(
+  rouletteRef,
+  (snapshot) => {
 
-  if (!data) return;
+    const data =
+      snapshot.val();
 
-  startRouletteAnimation(data);
-});
+
+    // =====================================================
+    // RESET
+    // =====================================================
+
+    if (!data) {
+
+      lastSpinTimestamp = null;
+
+      resetDrawVisual();
+
+      return;
+    }
+
+
+    // impede repetir a mesma animação
+    if (
+      data.timestamp ===
+      lastSpinTimestamp
+    ) {
+      return;
+    }
+
+
+    lastSpinTimestamp =
+      data.timestamp;
+
+
+    startDrawAnimation(
+      data.winner
+    );
+
+  }
+);
+
 
 // =========================================================
-// ANIMAÇÃO
+// ANIMAÇÃO DO SORTEIO
 // =========================================================
 
-function startRouletteAnimation(data) {
+function startDrawAnimation(winner) {
+
+  clearInterval(animationInterval);
+  clearTimeout(animationTimeout);
+
 
   resultNumber.textContent = "--";
 
-  renderRoulette(data.trackItems);
+  drawStatus.textContent =
+    "SORTEANDO...";
 
-  const display =
-    document.querySelector(".roulette-display");
 
-  const displayCenter =
-    display.offsetWidth / 2;
+  rollBtn.disabled = true;
 
-  const finalOffset =
-    (data.winnerIndex * ITEM_WIDTH)
-    - displayCenter
-    + (ITEM_WIDTH / 2);
+  if (playerRole === "admin") {
+    resetRouletteBtn.disabled = true;
+  }
 
-  // reset
-  rouletteTrack.style.transition = "none";
 
-  rouletteTrack.style.transform =
-    "translateX(0px)";
+  // =====================================================
+  // CORES DA ANIMAÇÃO
+  // =====================================================
 
-  requestAnimationFrame(() => {
+  const colors = [
+    "draw-red",
+    "draw-blue",
+    "draw-yellow",
+    "draw-green"
+  ];
 
-    requestAnimationFrame(() => {
 
-      rouletteTrack.style.transition =
-        "transform 5s cubic-bezier(.08,.69,.15,1)";
+  let colorIndex = 0;
 
-      rouletteTrack.style.transform =
-        `translateX(-${finalOffset}px)`;
-    });
-  });
 
-  // =========================================================
-  // RESULTADO REAL
-  // =========================================================
+  // =====================================================
+  // PISCA CORES + NOMES
+  // =====================================================
 
-  setTimeout(() => {
+  animationInterval =
+    setInterval(() => {
 
-    const display =
-      document.querySelector(".roulette-display");
+      drawCard.className =
+        "draw-card " +
+        colors[colorIndex];
 
-    const centerLine =
-      display.getBoundingClientRect().left
-      + (display.offsetWidth / 2);
 
-    const items =
-      document.querySelectorAll(".roulette-item");
+      colorIndex =
+        (colorIndex + 1) %
+        colors.length;
 
-    let closestItem = null;
 
-    let closestDistance = Infinity;
+      const randomOption =
+        rouletteOptions[
+          Math.floor(
+            Math.random() *
+            rouletteOptions.length
+          )
+        ];
 
-    // limpa glow antigo
-    items.forEach(item => {
 
-      item.style.boxShadow = "";
+      drawCardText.textContent =
+        randomOption;
 
-      item.style.transform = "";
-    });
+    }, 180);
 
-    // encontra item REAL
-    items.forEach(item => {
 
-      const rect =
-        item.getBoundingClientRect();
+  // =====================================================
+  // RESULTADO FINAL
+  // =====================================================
 
-      const itemCenter =
-        rect.left + (rect.width / 2);
+  animationTimeout =
+    setTimeout(() => {
 
-      const distance =
-        Math.abs(centerLine - itemCenter);
+      clearInterval(
+        animationInterval
+      );
 
-      if (distance < closestDistance) {
 
-        closestDistance = distance;
+      animationInterval = null;
 
-        closestItem = item;
+
+      // SEMPRE TERMINA VERDE
+      drawCard.className =
+        "draw-card draw-winner";
+
+
+      // MESMA VARIÁVEL NOS DOIS
+      drawCardText.textContent =
+        winner;
+
+
+      resultNumber.textContent =
+        winner;
+
+
+      drawStatus.textContent =
+        "RESULTADO";
+
+
+      if (playerRole === "admin") {
+
+        rollBtn.disabled = false;
+
+        resetRouletteBtn.disabled =
+          false;
+
       }
-    });
 
-    // vencedor VISUAL
-    const finalWinner =
-      closestItem?.textContent || "ERRO";
+    }, 3000);
 
-    resultNumber.textContent =
-      finalWinner;
-
-    // glow
-    if (closestItem) {
-
-      closestItem.style.boxShadow =
-        "0 0 30px rgba(255,255,255,0.9)";
-
-      closestItem.style.transform =
-        "scale(1.05)";
-    }
-
-    // libera admin
-    if (playerRole === "admin") {
-
-      rollBtn.disabled = false;
-    }
-
-  }, 5000);
 }
+
+
+// =========================================================
+// RESETAR SORTEADOR
+// =========================================================
+
+resetRouletteBtn.addEventListener(
+  "click",
+  async () => {
+
+    if (playerRole !== "admin") {
+      return;
+    }
+
+
+    const confirmReset =
+      confirm(
+        "Deseja resetar o sorteador? Todas as opções poderão sair novamente."
+      );
+
+
+    if (!confirmReset) {
+      return;
+    }
+
+
+    rollBtn.disabled = true;
+
+    resetRouletteBtn.disabled = true;
+
+
+    await remove(
+      ref(db, "roulette/currentSpin")
+    );
+
+
+    await remove(
+      ref(db, "roulette/usedOptions")
+    );
+
+
+    resetDrawVisual();
+
+
+    rollBtn.disabled = false;
+
+    resetRouletteBtn.disabled = false;
+
+  }
+);
+
 
 // =========================================================
 // PLAYERS
 // =========================================================
 
-window.addEventListener("load", () => {
+window.addEventListener(
+  "load",
+  () => {
 
-  const playersBox =
-    document.getElementById("playersBox");
+    const playersBox =
+      document.getElementById(
+        "playersBox"
+      );
 
-  const playersRef =
-    ref(db, "players");
 
-  onValue(playersRef, (snapshot) => {
+    const playersRef =
+      ref(db, "players");
 
-    const data = snapshot.val();
 
-    if (!data) {
+    onValue(
+      playersRef,
+      (snapshot) => {
 
-      playersBox.innerHTML = "Players";
+        const data =
+          snapshot.val();
 
-      return;
-    }
 
-    const playersList =
-      Object.values(data);
+        if (!data) {
 
-    playersBox.innerHTML = `
-      <strong>
-        Players (${playersList.length})
-      </strong><br>
+          playersBox.innerHTML =
+            "Players";
 
-      ${playersList.map(p => `
-        ${p.name} — ⭐ ${p.points || 0}
-      `).join("<br>")}
-    `;
-  });
-});
+          return;
+        }
+
+
+        const playersList =
+          Object.values(data);
+
+
+        playersBox.innerHTML = `
+          <strong>
+            Players (${playersList.length})
+          </strong>
+          <br>
+
+          ${playersList
+            .map(
+              p =>
+                `${p.name} — ⭐ ${p.points || 0}`
+            )
+            .join("<br>")}
+        `;
+
+      }
+    );
+
+  }
+);
+
 
 // =========================================================
 // REMOVE PLAYER
@@ -351,12 +519,22 @@ window.addEventListener(
   async () => {
 
     const playerId =
-      localStorage.getItem("playerId");
+      localStorage.getItem(
+        "playerId"
+      );
 
-    if (!playerId) return;
+
+    if (!playerId) {
+      return;
+    }
+
 
     await remove(
-      ref(db, `players/${playerId}`)
+      ref(
+        db,
+        `players/${playerId}`
+      )
     );
+
   }
 );

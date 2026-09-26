@@ -80,6 +80,45 @@
 }
 
 /* =========================================================
+   OPÇÃO AINDA NÃO SORTEADA
+========================================================= */
+
+.bingo-item.not-drawn {
+  animation: notDrawnFlash 0.5s ease;
+}
+
+
+@keyframes notDrawnFlash {
+
+  0% {
+    background: rgba(255, 255, 255, 0.08);
+    transform: scale(1);
+  }
+
+  35% {
+    background: rgba(58, 145, 142, 0.38);
+
+    border-color:
+      rgba(135, 220, 215, 0.22);
+
+    box-shadow:
+      0 0 22px rgba(58, 145, 142, 0.25);
+
+    transform: scale(0.98);
+  }
+
+  100% {
+    background: rgba(255, 255, 255, 0.08);
+
+    box-shadow:
+      0 8px 25px rgba(0, 0, 0, 0.25);
+
+    transform: scale(1);
+  }
+
+}
+
+/* =========================================================
    BOTÃO BINGO
 ========================================================= */
 

@@ -5,6 +5,7 @@ import {
   update
 } from "./firebase.js";
 
+
 // =========================================================
 // ELEMENTOS
 // =========================================================
@@ -18,11 +19,13 @@ const bingoCard =
 const bingoBtn =
   document.getElementById("bingoBtn");
 
+
 // =========================================================
 // OPÇÕES
 // =========================================================
 
 const bingoOptions = [
+
   "MIC FALHANDO",
   "LIVE CAINDO",
   "SONS ESTOURADOS",
@@ -50,7 +53,20 @@ const bingoOptions = [
   "PESSOA QUE SÓ APARECE 1X E GANHA SORTEIO",
   "PROBLEMAS DE SONS",
   "ESPIRRO DO YAGAMI"
+
 ];
+
+
+// =========================================================
+// CONTROLE DE PONTUAÇÃO
+// =========================================================
+
+// Guarda quais linhas desta cartela já deram ponto
+let scoredRows = [];
+
+// Controla se o bônus da cartela completa já foi recebido
+let fullCardScored = false;
+
 
 // =========================================================
 // SHUFFLE
@@ -60,237 +76,349 @@ function shuffleArray(array) {
 
   const arr = [...array];
 
-  for (let i = arr.length - 1; i > 0; i--) {
+  for (
+    let i = arr.length - 1;
+    i > 0;
+    i--
+  ) {
 
-    const j = Math.floor(Math.random() * (i + 1));
+    const j =
+      Math.floor(
+        Math.random() * (i + 1)
+      );
 
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    [arr[i], arr[j]] =
+      [arr[j], arr[i]];
+
   }
 
   return arr;
 }
 
+
 // =========================================================
 // GERAR CARTELA
 // =========================================================
 
-generateCardBtn.addEventListener("click", () => {
+generateCardBtn.addEventListener(
+  "click",
+  () => {
 
-  scoredCombos = {
-    rows: [],
-    cols: [],
-    diagonals: [],
-    full: false
-  };
+    // Nova cartela = novo controle de pontos
+    scoredRows = [];
+    fullCardScored = false;
 
-  bingoCard.innerHTML = "";
+    bingoCard.innerHTML = "";
 
-  // pega 16 opções aleatórias
-  const selected =
-    shuffleArray(bingoOptions).slice(0, 16);
 
-  selected.forEach(option => {
+    // Seleciona 16 opções aleatórias
+    const selected =
+      shuffleArray(bingoOptions)
+        .slice(0, 16);
 
-    const div =
-      document.createElement("div");
 
-    div.classList.add("bingo-item");
+    selected.forEach(option => {
 
-    div.textContent = option;
+      const div =
+        document.createElement("div");
 
-    // marcar item
-    div.addEventListener("click", () => {
-      div.classList.toggle("checked");
+      div.classList.add("bingo-item");
+
+      div.textContent = option;
+
+
+      // ===================================================
+      // CLICAR NO ITEM
+      // ===================================================
+
+      div.addEventListener(
+        "click",
+        async () => {
+
+          // Se já estiver marcado,
+          // permite desmarcar normalmente
+          if (
+            div.classList.contains("checked")
+          ) {
+
+            div.classList.remove("checked");
+
+            return;
+          }
+
+
+          // Busca tudo que já foi sorteado
+          const usedSnapshot =
+            await get(
+              ref(
+                db,
+                "roulette/usedOptions"
+              )
+            );
+
+
+          const usedData =
+            usedSnapshot.val() || {};
+
+
+          const drawnOptions =
+            Object.values(usedData);
+
+
+          // Verifica se esta opção já saiu
+          const wasDrawn =
+            drawnOptions.includes(option);
+
+
+          // Ainda não foi sorteada
+          if (!wasDrawn) {
+
+            showLockedFeedback(div);
+
+            return;
+          }
+
+
+          // Foi sorteada: pode marcar
+          div.classList.add("checked");
+
+        }
+      );
+
+
+      bingoCard.appendChild(div);
+
     });
 
-    bingoCard.appendChild(div);
-  });
 
-  bingoCard.classList.remove("hidden");
+    bingoCard.classList.remove("hidden");
 
-  bingoBtn.classList.remove("hidden");
-});
-// =========================================================
-// CONTROLE DE PONTOS DA CARTELA
-// =========================================================
+    bingoBtn.classList.remove("hidden");
 
-let scoredCombos = {
-  rows: [],
-  cols: [],
-  diagonals: [],
-  full: false
-};
+  }
+);
+
 
 // =========================================================
-// CALCULAR NOVOS PONTOS
+// FEEDBACK DE OPÇÃO NÃO SORTEADA
+// =========================================================
+
+function showLockedFeedback(item) {
+
+  // Remove para permitir reiniciar
+  // a animação em cliques seguidos
+  item.classList.remove("not-drawn");
+
+  void item.offsetWidth;
+
+  item.classList.add("not-drawn");
+
+
+  setTimeout(() => {
+
+    item.classList.remove("not-drawn");
+
+  }, 500);
+
+}
+
+
+// =========================================================
+// CALCULAR PONTOS
 // =========================================================
 
 function calculatePoints() {
 
-  const items =
-    [...document.querySelectorAll(".bingo-item")];
+  const items = [
+    ...document.querySelectorAll(
+      ".bingo-item"
+    )
+  ];
+
+
+  // Segurança caso não exista cartela
+  if (items.length !== 16) {
+    return 0;
+  }
+
 
   let newPoints = 0;
 
-  const grid = [];
 
-  while (items.length) {
-    grid.push(items.splice(0, 4));
-  }
-
-  // =====================================================
+  // =======================================================
   // LINHAS
-  // =====================================================
+  // =======================================================
 
-  for (let row = 0; row < 4; row++) {
+  for (
+    let row = 0;
+    row < 4;
+    row++
+  ) {
 
-    const complete =
-      grid[row].every(item =>
-        item.classList.contains("checked")
+    const start = row * 4;
+
+    const rowItems =
+      items.slice(
+        start,
+        start + 4
       );
 
+
+    const complete =
+      rowItems.every(
+        item =>
+          item.classList.contains(
+            "checked"
+          )
+      );
+
+
+    // Linha completa e ainda não pontuada
     if (
       complete &&
-      !scoredCombos.rows.includes(row)
+      !scoredRows.includes(row)
     ) {
-      scoredCombos.rows.push(row);
+
+      scoredRows.push(row);
 
       newPoints += 1;
-    }
-  }
 
-  // =====================================================
-  // COLUNAS
-  // =====================================================
-
-  for (let col = 0; col < 4; col++) {
-
-    let complete = true;
-
-    for (let row = 0; row < 4; row++) {
-
-      if (
-        !grid[row][col]
-        .classList.contains("checked")
-      ) {
-        complete = false;
-      }
     }
 
-    if (
-      complete &&
-      !scoredCombos.cols.includes(col)
-    ) {
-      scoredCombos.cols.push(col);
-
-      newPoints += 1;
-    }
   }
 
-  // =====================================================
-  // DIAGONAL 1
-  // =====================================================
 
-  let diagonal1 = true;
-
-  for (let i = 0; i < 4; i++) {
-
-    if (
-      !grid[i][i]
-      .classList.contains("checked")
-    ) {
-      diagonal1 = false;
-    }
-  }
-
-  if (
-    diagonal1 &&
-    !scoredCombos.diagonals.includes(1)
-  ) {
-    scoredCombos.diagonals.push(1);
-
-    newPoints += 1;
-  }
-
-  // =====================================================
-  // DIAGONAL 2
-  // =====================================================
-
-  let diagonal2 = true;
-
-  for (let i = 0; i < 4; i++) {
-
-    if (
-      !grid[i][3 - i]
-      .classList.contains("checked")
-    ) {
-      diagonal2 = false;
-    }
-  }
-
-  if (
-    diagonal2 &&
-    !scoredCombos.diagonals.includes(2)
-  ) {
-    scoredCombos.diagonals.push(2);
-
-    newPoints += 1;
-  }
-
-  // =====================================================
+  // =======================================================
   // CARTELA COMPLETA
-  // =====================================================
+  // =======================================================
 
   const fullCard =
-    document.querySelectorAll(
-      ".bingo-item.checked"
-    ).length === 16;
+    items.every(
+      item =>
+        item.classList.contains(
+          "checked"
+        )
+    );
 
+
+  // Bônus único de +1
   if (
     fullCard &&
-    !scoredCombos.full
+    !fullCardScored
   ) {
 
-    scoredCombos.full = true;
+    fullCardScored = true;
 
-    newPoints += 2;
+    newPoints += 1;
+
   }
+
 
   return newPoints;
 }
+
 
 // =========================================================
 // BINGO
 // =========================================================
 
-bingoBtn.addEventListener("click", async () => {
+bingoBtn.addEventListener(
+  "click",
+  async () => {
 
-  const points =
-    calculatePoints();
+    const points =
+      calculatePoints();
 
-  const playerId =
-    localStorage.getItem("playerId");
 
-  if (!playerId) return;
+    // =====================================================
+    // NENHUM BINGO NOVO
+    // =====================================================
 
-  const playerRef =
-    ref(db, `players/${playerId}`);
+    if (points === 0) {
 
-  const snapshot =
-    await get(playerRef);
+      showToast(
+        "Nenhuma nova linha foi completada!"
+      );
 
-  const player =
-    snapshot.val();
+      return;
+    }
 
-  const currentPoints =
-    player.points || 0;
 
-  await update(playerRef, {
-    points: currentPoints + points
-  });
+    const playerId =
+      localStorage.getItem(
+        "playerId"
+      );
 
-  showToast(`Você ganhou ${points} ponto(s)!`);
-});
+
+    if (!playerId) {
+      return;
+    }
+
+
+    const playerRef =
+      ref(
+        db,
+        `players/${playerId}`
+      );
+
+
+    const snapshot =
+      await get(playerRef);
+
+
+    const player =
+      snapshot.val();
+
+
+    if (!player) {
+      return;
+    }
+
+
+    const currentPoints =
+      player.points || 0;
+
+
+    await update(
+      playerRef,
+      {
+        points:
+          currentPoints + points
+      }
+    );
+
+
+    // =====================================================
+    // MENSAGEM
+    // =====================================================
+
+    if (
+      fullCardScored &&
+      scoredRows.length === 4 &&
+      points > 1
+    ) {
+
+      showToast(
+        `BINGO! Você ganhou ${points} pontos!`
+      );
+
+    } else if (points === 1) {
+
+      showToast(
+        "BINGO! Você ganhou 1 ponto!"
+      );
+
+    } else {
+
+      showToast(
+        `BINGO! Você ganhou ${points} pontos!`
+      );
+
+    }
+
+  }
+);
+
 
 // =========================================================
 // TOAST
@@ -299,13 +427,20 @@ bingoBtn.addEventListener("click", async () => {
 function showToast(message) {
 
   const toast =
-    document.getElementById("globalToast");
+    document.getElementById(
+      "globalToast"
+    );
+
 
   toast.textContent = message;
 
   toast.classList.remove("hidden");
 
+
   setTimeout(() => {
+
     toast.classList.add("hidden");
+
   }, 2000);
+
 }

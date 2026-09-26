@@ -29,31 +29,48 @@
   <div class="room-wrapper">
 
     <!-- ROLETA -->
-    <div class="roulette-container">
+<div class="roulette-container">
 
-      <h2 class="roulette-title">
-        Bingo Roller
-      </h2>
+  <h2 class="roulette-title">
+    Bingo Roller
+  </h2>
 
-      <!-- DISPLAY ROLETA -->
-      <div class="roulette-display">
+  <!-- CARD DO SORTEIO -->
+  <div class="draw-display" id="drawDisplay">
 
-<div class="roulette-track" id="rouletteTrack"></div>
-
-      </div>
-
-      <!-- BOTÃO -->
-      <button class="roll-btn" id="rollBtn">
-        Rolar Roleta
-      </button>
-
-      <!-- RESULTADO -->
-      <div class="result-box">
-        Resultado:
-        <span id="resultNumber">--</span>
-      </div>
-
+    <div class="draw-status" id="drawStatus">
+      PRONTO
     </div>
+
+    <div class="draw-card" id="drawCard">
+      <span id="drawCardText">?</span>
+    </div>
+
+  </div>
+
+  <!-- BOTÕES -->
+  <div class="roulette-buttons">
+
+    <button class="roll-btn" id="rollBtn">
+      Sortear
+    </button>
+
+    <button
+      class="reset-roulette-btn"
+      id="resetRouletteBtn"
+    >
+      Resetar
+    </button>
+
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="result-box">
+    Resultado:
+    <span id="resultNumber">--</span>
+  </div>
+
+</div>
 
 <!-- CARTELA -->
 <div class="bingo-section">

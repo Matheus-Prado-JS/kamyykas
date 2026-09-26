@@ -107,47 +107,58 @@
    DISPLAY ROLETA
 ========================================================= */
 
-.roulette-display {
+/* =========================================================
+   DISPLAY DO SORTEIO
+========================================================= */
+
+.draw-display {
   width: 100%;
-  height: 160px;
-
-  overflow: hidden;
-
-  border-radius: 20px;
-
-  background: rgba(0,0,0,0.2);
 
   display: flex;
-  align-items: center;
-  justify-content: center;
-
-  position: relative;
-}
-
-.roulette-track {
-  display: flex;
+  flex-direction: column;
   align-items: center;
 
-  gap: 20px;
-
-  padding: 0 20px;
-
-  transition: transform 3s cubic-bezier(.17,.67,.19,1);
-
-  will-change: transform;
+  gap: 12px;
 }
 
-.roulette-item {
-  width: 220px;
-  height: 120px;
 
-  padding: 12px;
+/* =========================================================
+   STATUS
+========================================================= */
 
-  border-radius: 18px;
+.draw-status {
+  color: rgba(255, 255, 255, 0.65);
 
-  background: rgba(255,255,255,0.08);
+  font-size: 12px;
+  font-weight: bold;
+
+  letter-spacing: 4px;
+
+  transition: 0.2s ease;
+}
+
+
+/* =========================================================
+   CARD PRINCIPAL
+========================================================= */
+
+.draw-card {
+  width: 100%;
+  min-height: 180px;
+
+  padding: 28px;
+
+  border-radius: 24px;
+
+  background:
+    rgba(255, 255, 255, 0.08);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.12);
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
@@ -155,42 +166,138 @@
 
   color: white;
 
-  font-size: 20px;
+  font-size: 26px;
   font-weight: bold;
 
   line-height: 1.25;
 
-  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  box-shadow:
+    0 15px 40px
+    rgba(0, 0, 0, 0.25);
 
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
 
-  flex-shrink: 0;
+  transition:
+    background 0.12s ease,
+    box-shadow 0.12s ease,
+    transform 0.12s ease;
 
-  overflow: hidden;
-
-  word-break: break-word;
+  user-select: none;
 }
 
-/* linha central */
 
-.roulette-display::after {
-  content: "";
+/* =========================================================
+   CORES DO SORTEIO
+   Cores complementares ao roxo
+========================================================= */
 
-  position: absolute;
+/* ROSA QUEIMADO */
+.draw-card.draw-red {
+  background:
+    rgba(174, 92, 132, 0.38);
 
-  width: 4px;
-  height: 80%;
+  border:
+    1px solid rgba(235, 165, 198, 0.18);
 
-  background: white;
+  box-shadow:
+    0 8px 32px rgba(120, 45, 85, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
-  border-radius: 999px;
+  transform: scale(0.99);
+}
 
-  left: 50%;
-  top: 50%;
 
-  transform: translate(-50%, -50%);
+/* AZUL NOTURNO */
+.draw-card.draw-blue {
+  background:
+    rgba(68, 105, 165, 0.38);
 
-  opacity: 0.8;
+  border:
+    1px solid rgba(145, 185, 235, 0.18);
+
+  box-shadow:
+    0 8px 32px rgba(35, 65, 120, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  transform: scale(1.01);
+}
+
+
+/* ÂMBAR SUAVE */
+.draw-card.draw-yellow {
+  background:
+    rgba(185, 142, 75, 0.36);
+
+  border:
+    1px solid rgba(235, 202, 140, 0.18);
+
+  box-shadow:
+    0 8px 32px rgba(120, 85, 35, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  transform: scale(0.99);
+}
+
+
+/* TURQUESA ESCURO */
+.draw-card.draw-green {
+  background:
+    rgba(58, 145, 142, 0.36);
+
+  border:
+    1px solid rgba(135, 220, 215, 0.18);
+
+  box-shadow:
+    0 8px 32px rgba(25, 100, 100, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  transform: scale(1.01);
+}
+
+
+/* =========================================================
+   VENCEDOR
+========================================================= */
+
+.draw-card.draw-winner {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.16),
+      rgba(196, 170, 220, 0.18)
+    );
+
+  border:
+    1px solid rgba(255, 255, 255, 0.42);
+
+  box-shadow:
+    0 12px 45px rgba(10, 0, 25, 0.30),
+    0 0 32px rgba(220, 195, 245, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+
+  transform: scale(1.025);
+
+  animation:
+    winnerPulse 0.55s ease;
+}
+
+
+@keyframes winnerPulse {
+
+  0% {
+    transform: scale(0.96);
+    opacity: 0.7;
+  }
+
+  55% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.025);
+    opacity: 1;
+  }
 }
 
 /* =========================================================
@@ -330,4 +437,55 @@ body {
     opacity: 1;
     transform: translateX(-50%) translateY(0px);
   }
+}
+
+/* =========================================================
+   BOTÕES DA ROLETA
+========================================================= */
+
+.roulette-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+
+/* =========================================================
+   RESET ROLETA
+========================================================= */
+
+.reset-roulette-btn {
+  padding: 16px 28px;
+
+  font-size: 17px;
+  font-weight: bold;
+
+  border-radius: 999px;
+  border: none;
+
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+
+  backdrop-filter: blur(10px);
+}
+
+
+.reset-roulette-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+
+  transform:
+    translateY(-3px)
+    scale(1.04);
+}
+
+
+.reset-roulette-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
