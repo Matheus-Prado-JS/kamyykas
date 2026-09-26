@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Sorteador</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="room-sort.css"
+  />
+
+</head>
+
+<body>
+
+  <main class="sort-room">
+
+    <!-- ===================================================
+         ÁREA CENTRAL
+    ==================================================== -->
+
+    <section class="sort-main">
+
+      <div class="sort-header">
+
+        <span class="sort-label">
+          SORTEADOR
+        </span>
+
+        <h1>
+          Participantes
+        </h1>
+
+        <p>
+          Adicione os nomes para começar.
+        </p>
+
+      </div>
+
+
+      <!-- RESULTADO -->
+
+      <div
+        class="winner-banner hidden"
+        id="winnerBanner"
+      >
+
+        <span class="winner-label">
+          VENCEDOR
+        </span>
+
+        <strong id="winnerName">
+          --
+        </strong>
+
+      </div>
+
+
+      <!-- CARTELAS -->
+
+      <div
+        class="sort-cards"
+        id="sortCards"
+      >
+
+        <div class="empty-state">
+
+          <span>+</span>
+
+          <p>
+            Os participantes aparecerão aqui
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         PAINEL DIREITO
+    ==================================================== -->
+
+    <aside class="sort-sidebar">
+
+      <div class="sidebar-header">
+
+        <span>
+          ENTRADAS
+        </span>
+
+        <h2>
+          Participantes
+        </h2>
+
+        <p>
+          Separe cada participante usando espaço.
+        </p>
+
+      </div>
+
+
+      <textarea
+        id="participantsInput"
+        placeholder="Escreva os participantes aqui"
+        spellcheck="false"
+      ></textarea>
+
+
+      <!-- CONTADOR -->
+
+      <div class="sidebar-info">
+
+        <span id="participantCount">
+          0 participantes
+        </span>
+
+      </div>
+
+
+      <!-- BOTÕES -->
+
+      <div class="sidebar-actions">
+
+        <button
+          id="clearParticipantsBtn"
+          class="sidebar-btn secondary"
+          type="button"
+        >
+          Limpar
+        </button>
+
+
+        <button
+          id="systemBtn"
+          class="sidebar-btn secondary"
+          type="button"
+        >
+          Sistema
+        </button>
+
+
+        <button
+          id="drawBtn"
+          class="sidebar-btn primary"
+          type="button"
+        >
+          Sortear
+        </button>
+
+      </div>
+
+    </aside>
+
+  </main>
+
+
+  <!-- =====================================================
+       MODAL DE SISTEMAS
+  ====================================================== -->
+
+  <div
+    class="system-modal hidden"
+    id="systemModal"
+  >
+
+    <div class="system-modal-box">
+
+      <div class="system-modal-header">
+
+        <div>
+
+          <span>
+            CONFIGURAÇÃO
+          </span>
+
+          <h2>
+            Sistema de Sorteio
+          </h2>
+
+        </div>
+
+
+        <button
+          class="close-system-btn"
+          id="closeSystemBtn"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <p class="system-description">
+        Escolha como o vencedor será definido durante o sorteio.
+      </p>
+
+
+      <!-- SISTEMA PADRÃO -->
+
+      <div class="system-option selected">
+
+        <div class="system-option-content">
+
+          <div class="system-option-title">
+
+            <h3>
+              Sorteio Padrão
+            </h3>
+
+            <span class="system-badge">
+              PADRÃO
+            </span>
+
+          </div>
+
+
+          <p>
+            As cartelas piscam aleatoriamente
+            em diferentes cores enquanto os
+            participantes são eliminados.
+            No final, apenas um vencedor permanece.
+          </p>
+
+        </div>
+
+
+        <div class="system-check">
+          ✓
+        </div>
+
+      </div>
+
+
+      <!-- FUTUROS SISTEMAS ENTRARÃO AQUI -->
+
+    </div>
+
+  </div>
+
+
+  <script src="room-sort.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,1008 @@
+/* =========================================================
+   SALA DO SORTEADOR
+========================================================= */
+
+.sort-room {
+  width: 100vw;
+  height: 100vh;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    400px;
+
+  gap: 24px;
+
+  padding: 28px;
+}
+
+
+/* =========================================================
+   ÁREA PRINCIPAL
+========================================================= */
+
+.sort-main {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px 10px;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.sort-header {
+  margin-bottom: 20px;
+}
+
+
+.sort-label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color:
+    rgba(205, 180, 235, 0.7);
+
+  font-size: 11px;
+  font-weight: bold;
+
+  letter-spacing: 4px;
+}
+
+
+.sort-header h1 {
+  color: white;
+
+  font-size: 36px;
+  font-weight: 700;
+
+  margin-bottom: 6px;
+}
+
+
+.sort-header p {
+  color:
+    rgba(255, 255, 255, 0.48);
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   RESULTADO
+========================================================= */
+
+.winner-banner {
+  width: 100%;
+
+  margin-bottom: 18px;
+
+  padding: 16px 20px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.12),
+      rgba(58, 145, 142, 0.15)
+    );
+
+  border:
+    1px solid
+    rgba(135, 220, 215, 0.22);
+
+  box-shadow:
+    0 10px 35px
+    rgba(0, 0, 0, 0.18);
+
+  animation:
+    winnerBannerEnter
+    0.45s ease;
+}
+
+
+.winner-label {
+  color:
+    rgba(255, 255, 255, 0.48);
+
+  font-size: 10px;
+
+  font-weight: bold;
+
+  letter-spacing: 3px;
+}
+
+
+#winnerName {
+  color: white;
+
+  font-size: 20px;
+
+  text-align: right;
+}
+
+
+@keyframes winnerBannerEnter {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0);
+  }
+
+}
+
+
+/* =========================================================
+   CARTELAS
+========================================================= */
+
+.sort-cards {
+  flex: 1;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fill,
+      minmax(180px, 1fr)
+    );
+
+  align-content: start;
+
+  gap: 14px;
+
+  overflow-y: auto;
+
+  padding:
+    4px 8px
+    20px 4px;
+}
+
+
+/* =========================================================
+   CARTELA INDIVIDUAL
+========================================================= */
+
+.sort-card {
+  min-height: 110px;
+
+  padding: 18px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  color: white;
+
+  font-size: 17px;
+  font-weight: bold;
+
+  line-height: 1.3;
+
+  border-radius: 18px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.10);
+
+  background:
+    rgba(255, 255, 255, 0.07);
+
+  backdrop-filter:
+    blur(12px);
+
+  box-shadow:
+    0 10px 30px
+    rgba(0, 0, 0, 0.18);
+
+  animation:
+    cardEnter 0.25s ease;
+
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.3s ease,
+    filter 0.3s ease;
+}
+
+
+.sort-card:hover {
+  transform:
+    translateY(-2px);
+
+  background:
+    rgba(255, 255, 255, 0.10);
+
+  border-color:
+    rgba(255, 255, 255, 0.16);
+}
+
+
+/* =========================================================
+   CORES DO SORTEIO
+========================================================= */
+
+.sort-card.flash-pink {
+  background:
+    rgba(174, 92, 132, 0.42);
+
+  border-color:
+    rgba(235, 165, 198, 0.24);
+
+  box-shadow:
+    0 0 28px
+    rgba(174, 92, 132, 0.20);
+
+  transform:
+    scale(1.025);
+}
+
+
+.sort-card.flash-blue {
+  background:
+    rgba(68, 105, 165, 0.42);
+
+  border-color:
+    rgba(145, 185, 235, 0.24);
+
+  box-shadow:
+    0 0 28px
+    rgba(68, 105, 165, 0.20);
+
+  transform:
+    scale(1.025);
+}
+
+
+.sort-card.flash-gold {
+  background:
+    rgba(185, 142, 75, 0.40);
+
+  border-color:
+    rgba(235, 202, 140, 0.24);
+
+  box-shadow:
+    0 0 28px
+    rgba(185, 142, 75, 0.18);
+
+  transform:
+    scale(1.025);
+}
+
+
+.sort-card.flash-teal {
+  background:
+    rgba(58, 145, 142, 0.42);
+
+  border-color:
+    rgba(135, 220, 215, 0.24);
+
+  box-shadow:
+    0 0 28px
+    rgba(58, 145, 142, 0.20);
+
+  transform:
+    scale(1.025);
+}
+
+
+/* =========================================================
+   ELIMINADO
+========================================================= */
+
+.sort-card.eliminated {
+  opacity: 0.20;
+
+  filter:
+    grayscale(0.8);
+
+  transform:
+    scale(0.96);
+
+  background:
+    rgba(255, 255, 255, 0.025);
+
+  border-color:
+    rgba(255, 255, 255, 0.04);
+
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   VENCEDOR
+========================================================= */
+
+.sort-card.winner {
+  opacity: 1;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(58, 145, 142, 0.42),
+      rgba(255, 255, 255, 0.12)
+    );
+
+  border:
+    1px solid
+    rgba(135, 220, 215, 0.50);
+
+  box-shadow:
+    0 0 30px
+    rgba(58, 145, 142, 0.30),
+
+    0 0 65px
+    rgba(58, 145, 142, 0.15);
+
+  transform:
+    scale(1.045);
+
+  animation:
+    winnerPulse
+    0.65s ease;
+}
+
+
+@keyframes winnerPulse {
+
+  0% {
+    transform:
+      scale(0.92);
+  }
+
+  60% {
+    transform:
+      scale(1.07);
+  }
+
+  100% {
+    transform:
+      scale(1.045);
+  }
+
+}
+
+
+/* =========================================================
+   ENTRADA DO CARD
+========================================================= */
+
+@keyframes cardEnter {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(8px)
+      scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+
+/* =========================================================
+   ESTADO VAZIO
+========================================================= */
+
+.empty-state {
+  grid-column: 1 / -1;
+
+  min-height: 300px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  color:
+    rgba(255, 255, 255, 0.32);
+
+  border:
+    1px dashed
+    rgba(255, 255, 255, 0.12);
+
+  border-radius: 22px;
+}
+
+
+.empty-state span {
+  font-size: 38px;
+  font-weight: 300;
+}
+
+
+.empty-state p {
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   PAINEL DIREITO
+========================================================= */
+
+.sort-sidebar {
+  height: 100%;
+
+  padding: 26px;
+
+  display: flex;
+  flex-direction: column;
+
+  border-radius: 26px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.10);
+
+  background:
+    rgba(18, 5, 35, 0.48);
+
+  backdrop-filter:
+    blur(18px);
+
+  box-shadow:
+    0 20px 60px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   CABEÇALHO LATERAL
+========================================================= */
+
+.sidebar-header {
+  margin-bottom: 20px;
+}
+
+
+.sidebar-header > span {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color:
+    rgba(205, 180, 235, 0.65);
+
+  font-size: 10px;
+  font-weight: bold;
+
+  letter-spacing: 3px;
+}
+
+
+.sidebar-header h2 {
+  color: white;
+
+  margin-bottom: 7px;
+
+  font-size: 22px;
+}
+
+
+.sidebar-header p {
+  color:
+    rgba(255, 255, 255, 0.45);
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   ÁREA DE TEXTO
+========================================================= */
+
+#participantsInput {
+  width: 100%;
+  flex: 1;
+
+  resize: none;
+
+  padding: 18px;
+
+  outline: none;
+
+  color: white;
+
+  font-size: 16px;
+
+  line-height: 1.8;
+
+  border-radius: 18px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.10);
+
+  background:
+    rgba(255, 255, 255, 0.055);
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+#participantsInput::placeholder {
+  color:
+    rgba(255, 255, 255, 0.22);
+}
+
+
+#participantsInput:focus {
+  background:
+    rgba(255, 255, 255, 0.075);
+
+  border-color:
+    rgba(135, 220, 215, 0.28);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(58, 145, 142, 0.07);
+}
+
+
+/* =========================================================
+   CONTADOR
+========================================================= */
+
+.sidebar-info {
+  margin-top: 14px;
+}
+
+
+#participantCount {
+  color:
+    rgba(255, 255, 255, 0.45);
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+
+.sidebar-actions {
+  display: grid;
+
+  grid-template-columns:
+    auto auto 1fr;
+
+  gap: 9px;
+
+  margin-top: 16px;
+}
+
+
+.sidebar-btn {
+  padding:
+    11px 16px;
+
+  font-size: 13px;
+
+  box-shadow: none;
+}
+
+
+.sidebar-btn.secondary {
+  background:
+    rgba(255, 255, 255, 0.07);
+
+  color:
+    rgba(255, 255, 255, 0.72);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.10);
+}
+
+
+.sidebar-btn.secondary:hover {
+  background:
+    rgba(255, 255, 255, 0.12);
+}
+
+
+.sidebar-btn.primary {
+  background:
+    rgba(255, 255, 255, 0.94);
+
+  color:
+    #2a0a4a;
+}
+
+
+.sidebar-btn:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+
+/* =========================================================
+   MODAL SISTEMAS
+========================================================= */
+
+.system-modal {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1000;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background:
+    rgba(8, 0, 18, 0.68);
+
+  backdrop-filter:
+    blur(10px);
+}
+
+
+.system-modal-box {
+  width: min(
+    560px,
+    100%
+  );
+
+  padding: 28px;
+
+  border-radius: 26px;
+
+  background:
+    rgba(28, 8, 48, 0.96);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.12);
+
+  box-shadow:
+    0 30px 90px
+    rgba(0, 0, 0, 0.45);
+
+  animation:
+    modalEnter
+    0.25s ease;
+}
+
+
+@keyframes modalEnter {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(10px)
+      scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+
+.system-modal-header {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+
+.system-modal-header span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color:
+    rgba(205, 180, 235, 0.65);
+
+  font-size: 10px;
+
+  font-weight: bold;
+
+  letter-spacing: 3px;
+}
+
+
+.system-modal-header h2 {
+  color: white;
+
+  font-size: 26px;
+}
+
+
+.close-system-btn {
+  width: 38px;
+  height: 38px;
+
+  padding: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  color:
+    rgba(255, 255, 255, 0.60);
+
+  background:
+    rgba(255, 255, 255, 0.06);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  box-shadow: none;
+
+  font-size: 24px;
+
+  font-weight: 300;
+}
+
+
+.close-system-btn:hover {
+  color: white;
+
+  background:
+    rgba(255, 255, 255, 0.11);
+}
+
+
+.system-description {
+  margin:
+    16px 0 22px;
+
+  color:
+    rgba(255, 255, 255, 0.45);
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   OPÇÃO DE SISTEMA
+========================================================= */
+
+.system-option {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  padding: 20px;
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, 0.055);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+}
+
+
+.system-option.selected {
+  background:
+    rgba(58, 145, 142, 0.10);
+
+  border-color:
+    rgba(135, 220, 215, 0.25);
+}
+
+
+.system-option-content {
+  flex: 1;
+}
+
+
+.system-option-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 8px;
+}
+
+
+.system-option-title h3 {
+  color: white;
+
+  font-size: 16px;
+}
+
+
+.system-badge {
+  padding:
+    4px 7px;
+
+  border-radius: 999px;
+
+  color:
+    rgba(170, 235, 230, 0.85);
+
+  background:
+    rgba(58, 145, 142, 0.15);
+
+  font-size: 8px;
+
+  font-weight: bold;
+
+  letter-spacing: 1px;
+}
+
+
+.system-option-content p {
+  color:
+    rgba(255, 255, 255, 0.45);
+
+  font-size: 12px;
+
+  line-height: 1.55;
+}
+
+
+.system-check {
+  width: 26px;
+  height: 26px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  color: white;
+
+  background:
+    rgba(58, 145, 142, 0.65);
+
+  box-shadow:
+    0 0 20px
+    rgba(58, 145, 142, 0.22);
+
+  font-size: 13px;
+
+  font-weight: bold;
+}
+
+
+/* =========================================================
+   HIDDEN
+========================================================= */
+
+.hidden {
+  display: none !important;
+}
+
+
+/* =========================================================
+   SCROLL
+========================================================= */
+
+.sort-cards::-webkit-scrollbar,
+#participantsInput::-webkit-scrollbar {
+  width: 6px;
+}
+
+
+.sort-cards::-webkit-scrollbar-thumb,
+#participantsInput::-webkit-scrollbar-thumb {
+  background:
+    rgba(255, 255, 255, 0.15);
+
+  border-radius: 999px;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 900px) {
+
+  body {
+    overflow: auto;
+  }
+
+
+  .sort-room {
+    height: auto;
+
+    min-height: 100vh;
+
+    grid-template-columns:
+      1fr;
+
+    padding: 20px;
+  }
+
+
+  .sort-sidebar {
+    min-height: 400px;
+
+    order: -1;
+  }
+
+
+  .sort-main {
+    min-height: 500px;
+  }
+
+
+  .sidebar-actions {
+    grid-template-columns:
+      repeat(3, 1fr);
+  }
+
+}
